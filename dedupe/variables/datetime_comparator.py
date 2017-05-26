@@ -10,6 +10,25 @@ class DateTimeType(FieldType):
     type = "DateTime"
     _predicate_functions = [predicates.wholeFieldPredicate]
 
-    def __init__(self):
+    def __init__(self, definition):
 
-        self.comparator = DateTimeComparator()
+        super(DateTimeType, self).__init__(definition)
+
+        try:
+            self.fuzzy = definition['fuzzy']
+        except KeyError:
+            self.fuzzy = True
+
+        try:
+            self.dayfirst = definition['dayfirst']
+        except KeyError:
+            self.dayfirst = False
+
+        try:
+            self.yearfirst = definition['yearfirst']
+        except KeyError:
+            self.yearfirst = False
+
+        self.comparator = DateTimeComparator(fuzzy=self.fuzzy,
+                                             dayfirst=self.dayfirst,
+                                             yearfirst=self.yearfirst)
