@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from dedupe.variables.string import affineGap
 from dedupe.variables.base import FieldType, DerivedType
 from dedupe import predicates
 from datetime_distance import DateTimeComparator
@@ -37,9 +38,9 @@ class DateTimeType(FieldType):
         self.variables = ('seconds', 'days', 'months', 'years')
         fields = self._get_fields(definition['field'])
 
-        # not missing + indicators + fields
+        # not missing + dummies + fields + full string
         self.expanded_size = (1 + (len(self.variables) - 1) +
-                              len(self.variables))
+                              len(self.variables) + 1)
 
         self.higher_vars = [DerivedType({'name': variable,
                                          'type': field_type})
@@ -53,7 +54,16 @@ class DateTimeType(FieldType):
 
         fields += [(var, 'Derived') for var in self.variables]
 
+        fields += [('full string', 'String')]
+
         return fields
+
+    def _compare_as_strings(self, field_1, field_2):
+
+        if (field_1 and field_1 != '') and (field_2 and field_2 != ''):
+            return affineGap(field_1, field_2)
+        else:
+            return np.nan
 
     def comparator(self, field_1, field_2):
 
@@ -68,7 +78,12 @@ class DateTimeType(FieldType):
 
         distances[0] = 1
 
-        comparisons = c(field_1, field_2)
+        try:
+            comparisons = c(field_1, field_2)
+        except ValueError:
+            # Bad parse - use string comparison instead
+            distances[-1] = self._compare_as_strings(field_1, field_2)
+            return distances
 
         if not np.any(comparisons):
             # Exact match
@@ -80,6 +95,8 @@ class DateTimeType(FieldType):
                     distances[i+1] = 1
                     break
 
-            distances[len(comparisons):] = comparisons
+            i = len(comparisons)
 
-        return distances
+            distances[i:i+i] = comparisons
+
+            return distances
