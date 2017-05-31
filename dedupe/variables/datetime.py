@@ -63,7 +63,7 @@ class DateTimeType(FieldType):
         if (field_1 and field_1 != '') and (field_2 and field_2 != ''):
             return affineGap(field_1, field_2)
         else:
-            return np.nan
+            return 0
 
     def comparator(self, field_1, field_2):
 
@@ -71,7 +71,7 @@ class DateTimeType(FieldType):
                                dayfirst=self.dayfirst,
                                yearfirst=self.yearfirst)
 
-        distances = np.empty(self.expanded_size)
+        distances = np.zeros(self.expanded_size)
 
         if not (field_1 and field_2):
             return distances
