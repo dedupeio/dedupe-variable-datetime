@@ -35,12 +35,12 @@ class DateTimeType(FieldType):
         except KeyError:
             self.yearfirst = False
 
-        self.variables = ('seconds', 'days', 'months', 'years')
+        self.variables = ('seconds', 'days', 'months', 'years', 'string')
         fields = self._get_fields(definition['field'])
 
-        # not missing + dummies + fields + full string
+        # not missing + dummies + fields
         self.expanded_size = (1 + (len(self.variables) - 1) +
-                              len(self.variables) + 1)
+                              len(self.variables))
 
         self.higher_vars = [DerivedType({'name': variable,
                                          'type': field_type})
@@ -91,12 +91,14 @@ class DateTimeType(FieldType):
         else:
             # Switch on the right dummy variable
             for i, val in enumerate(comparisons):
-                if val and i < (len(comparisons) - 1):
+                if val:
                     distances[i+1] = 1
                     break
 
-            i = len(comparisons)
+            # Start after the dummy variables
+            i = len(comparisons) + 1
 
-            distances[i:i+i] = comparisons
+            # Copy over all comparisons, skipping the last index (string var)
+            distances[i:i+i-1] = comparisons
 
             return distances
