@@ -6,8 +6,8 @@ except ImportError:
 
 setup(
     name='dedupe-variable-datetime',
-    url='https://github.com/datamade/dedupe-variable-fuzzycategory',
-    version='0.0.1',
+    url='https://github.com/datamade/dedupe-variable-datetime',
+    version='0.1.0',
     description='DateTime variable type for dedupe',
     packages=['dedupe.variables'],
     install_requires=['dedupe',
