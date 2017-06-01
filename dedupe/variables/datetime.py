@@ -17,28 +17,26 @@ class DateTimeType(FieldType):
         return self.expanded_size
 
     def __init__(self, definition):
+        """
+        Initialize a field for comparing datetime types, including timestamps,
+        dates, months, and years.
+
+        Custom field definitions for this class include:
+            * `fuzzy` (bool): Use fuzzy parsing for datetime fields (default True)
+            * `dayfirst` (bool): Ambiguous dates should be parsed as dd/mm/yy (default False)
+            * `yearfirst` (bool): Ambiguous dates should be parsed as yy/mm/dd (default False)
+
+        If both `dayfirst` and `yearfirst` are set to True, `dayfirst` will take precedence.
+        See https://dateutil.readthedocs.io/en/stable/parser.html#dateutil.parser.parse
+        for more information about python-dateutil's parser settings.
+        """
 
         super(DateTimeType, self).__init__(definition)
 
         # Parser settings
-        # (c.f. https://dateutil.readthedocs.io/en/stable/parser.html#dateutil.parser.parse)
-        try:
-            # Use fuzzy parsing
-            self.fuzzy = definition['fuzzy']
-        except KeyError:
-            self.fuzzy = True
-
-        try:
-             # Ambiguous dates should be parsed as dd/mm/yy (default: mm/dd/yy)
-            self.dayfirst = definition['dayfirst']
-        except KeyError:
-            self.dayfirst = False
-
-        try:
-            # Ambiguous dates should be parsed as yy/mm/dd
-            self.yearfirst = definition['yearfirst']
-        except KeyError:
-            self.yearfirst = False
+        self.fuzzy = definition.get('fuzzy', True)
+        self.dayfirst = definition.get('dayfirst', False)
+        self.yearfirst = definition.get('yearfirst', False)
 
         # Define the expected fields in the output vector
         self.variables = ('seconds', 'days', 'months', 'years', 'full string')
@@ -66,15 +64,16 @@ class DateTimeType(FieldType):
 
     def _compare_as_strings(self, field_1, field_2):
         """
-        String comparison function (backup in case of bad parse).
+        String comparison function (backup in case of bad parses).
         """
-        if (field_1 and field_1 != '') and (field_2 and field_2 != ''):
-            return affineGap(field_1, field_2)
-        else:
-            return 0
+        return affineGap(field_1, field_2)
 
     def comparator(self, field_1, field_2):
+        """
+        The comparator function for this class.
 
+        Compares two strings and returns a distance vector.
+        """
         c = DateTimeComparator(fuzzy=self.fuzzy,
                                dayfirst=self.dayfirst,
                                yearfirst=self.yearfirst)
@@ -96,20 +95,7 @@ class DateTimeType(FieldType):
             # We don't have to update any dummy vars, because string is last
             return distances
 
-        if not np.any(comparisons):  # If all distances are 0
-            # Exact match
-            return distances
-        else:
-            # Switch on the right dummy variable
-            for i, val in enumerate(comparisons):
-                if val:
-                    distances[i+1] = 1
-                    break
+        # Copy over all comparisons, skipping the last index (string var)
+        distances[1:len(comparisons)+1] = comparisons
 
-            # Insert the comparison vector after the dummy variables
-            i = len(comparisons) + 1
-
-            # Copy over all comparisons, skipping the last index (string var)
-            distances[i:i+i-1] = comparisons
-
-            return distances
+        return distances
