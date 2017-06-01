@@ -35,7 +35,7 @@ class DateTimeType(FieldType):
         except KeyError:
             self.yearfirst = False
 
-        self.variables = ('seconds', 'days', 'months', 'years', 'string')
+        self.variables = ('seconds', 'days', 'months', 'years', 'full string')
         fields = self._get_fields(definition['field'])
 
         # not missing + dummies + fields
@@ -53,8 +53,6 @@ class DateTimeType(FieldType):
         fields += [(var, 'Dummy') for var in self.variables[:-1]]
 
         fields += [(var, 'Derived') for var in self.variables]
-
-        fields += [('full string', 'String')]
 
         return fields
 

@@ -1,10 +1,8 @@
 import math
-import unittest
 
 import numpy as np
 
 from dedupe.variables.datetime import DateTimeType
-
 
 
 def test_datetime_to_datetime_comparison():
@@ -69,4 +67,4 @@ def test_bad_parse():
 def test_missing():
     dt = DateTimeType({'field': 'foo'})
     np.testing.assert_almost_equal(dt.comparator('', 'non-empty'),
-                            np.zeros(len(dt)))
+                                   np.zeros(len(dt)))
