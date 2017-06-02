@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+import datetime
 
 from dedupe.variables.datetime import DateTimeType
 import dedupe.variables.datetime_predicates as dtp
@@ -77,6 +78,14 @@ def test_missing():
     dt = DateTimeType({'field': 'foo'})
     np.testing.assert_almost_equal(dt.comparator('', 'non-empty'),
                                    np.zeros(len(dt)))
+
+
+def test_datetime_object():
+    dt = DateTimeType({'field': 'foo'})
+    a = datetime.datetime(2016, 5, 6, 0, 0)
+    b = datetime.datetime(2016, 5, 7, 0, 0)
+    np.testing.assert_almost_equal(dt.comparator(a, b),
+        np.array([1, 1, 0, 0, 0, 293.93876913, 0, 0, 0, 0]))
 
 
 def test_year_predicate():
