@@ -83,32 +83,64 @@ def test_year_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.yearPredicate(field) == (2013,)
 
+    missing_field = '11:45am May 6th'
+    assert dtp.yearPredicate(missing_field) == ()
+
 
 def test_month_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.monthPredicate(field) == (2013, 5)
+
+    missing_field = '2013'
+    assert dtp.monthPredicate(missing_field) == ()
 
 
 def test_exclusive_month_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.exclusiveMonthPredicate(field) == (5,)
 
+    missing_field = '11:45am'
+    assert dtp.exclusiveMonthPredicate(missing_field) == ()
+
 
 def test_day_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.dayPredicate(field) == (2013, 5, 6)
+
+    missing_field = 'May 2013'
+    assert dtp.dayPredicate(missing_field) == ()
 
 
 def test_exclusive_day_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.exclusiveDayPredicate(field) == (6,)
 
+    missing_field = '5/2013'
+    assert dtp.exclusiveDayPredicate(missing_field) == ()
+
 
 def test_hour_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.hourPredicate(field) == (2013, 5, 6, 11)
 
+    missing_field = 'May 6th, 2013'
+    assert dtp.hourPredicate(missing_field) == ()
+
 
 def test_exclusive_hour_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.exclusiveHourPredicate(field) == (11,)
+
+    missing_field = 'May 6th, 2013'
+    assert dtp.exclusiveHourPredicate(missing_field) == ()
+
+
+def test_bad_parse_predicate():
+    field = 'foo bar'
+    assert dtp.yearPredicate(field) == ()
+    assert dtp.monthPredicate(field) == ()
+    assert dtp.exclusiveMonthPredicate(field) == ()
+    assert dtp.dayPredicate(field) == ()
+    assert dtp.exclusiveDayPredicate(field) == ()
+    assert dtp.hourPredicate(field) == ()
+    assert dtp.exclusiveHourPredicate(field) == ()
