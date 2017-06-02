@@ -4,13 +4,21 @@ from dedupe.variables.string import affineGap
 from dedupe.variables.base import FieldType, DerivedType
 from dedupe import predicates
 from datetime_distance import DateTimeComparator
+import dedupe.variables.datetime_predicates as dtp
 import numpy as np
 
 
 class DateTimeType(FieldType):
 
     type = "DateTime"
-    _predicate_functions = [predicates.wholeFieldPredicate]
+    _predicate_functions = [predicates.wholeFieldPredicate,
+                            dtp.yearPredicate,
+                            dtp.monthPredicate,
+                            dtp.dayPredicate,
+                            dtp.hourPredicate,
+                            dtp.exclusiveMonthPredicate,
+                            dtp.exclusiveDayPredicate,
+                            dtp.exclusiveHourPredicate]
 
     def __len__(self):
 
