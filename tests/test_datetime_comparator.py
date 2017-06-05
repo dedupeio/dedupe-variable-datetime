@@ -78,6 +78,8 @@ def test_missing():
     dt = DateTimeType({'field': 'foo'})
     np.testing.assert_almost_equal(dt.comparator('', 'non-empty'),
                                    np.zeros(len(dt)))
+    np.testing.assert_almost_equal(dt.comparator(None, 'non-empty'),
+                                   np.zeros(len(dt)))
 
 
 def test_datetime_object():

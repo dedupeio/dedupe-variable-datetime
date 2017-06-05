@@ -82,9 +82,6 @@ class DateTimeType(FieldType):
 
         Compares two strings and returns a distance vector.
         """
-        # Cast inputs to strings
-        field_1, field_2 = str(field_1), str(field_2)
-
         c = DateTimeComparator(fuzzy=self.fuzzy,
                                dayfirst=self.dayfirst,
                                yearfirst=self.yearfirst)
@@ -97,6 +94,9 @@ class DateTimeType(FieldType):
             return distances
 
         distances[0] = 1
+
+        # Cast inputs to strings, in case they're DateTime objects
+        field_1, field_2 = str(field_1), str(field_2)
 
         try:
             comparisons = c(field_1, field_2)
