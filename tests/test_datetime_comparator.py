@@ -74,6 +74,14 @@ def test_bad_parse():
     assert len(dt.comparator('foo', 'bar') == len(dt.higher_vars))
 
 
+def test_fuzzy_parse():
+    dt = DateTimeType({'field': 'foo'})
+    time1 = 'June 6th 2013'
+    time2 = 'It happened on June 7th, 2013'
+    np.testing.assert_almost_equal(dt.comparator(time1, time2),
+        np.array([1, 0, 1, 0, 0, 0, math.sqrt(1), 0, 0, 0]))
+
+
 def test_missing():
     dt = DateTimeType({'field': 'foo'})
     np.testing.assert_almost_equal(dt.comparator('', 'non-empty'),
