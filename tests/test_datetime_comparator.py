@@ -3,7 +3,7 @@ import math
 import numpy as np
 import datetime
 
-from dedupe.variables.datetime import DateTimeType
+from dedupe.variables.date_time import DateTimeType
 import dedupe.variables.datetime_predicates as dtp
 
 
