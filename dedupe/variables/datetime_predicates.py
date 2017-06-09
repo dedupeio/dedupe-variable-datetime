@@ -1,5 +1,5 @@
 from datetime_distance import DateTimeComparator
-import datetime
+from datetime import timedelta
 
 from dateutil.parser import parse
 
@@ -79,8 +79,8 @@ def threeDayPredicate(field):
     if dt1:
         if dt1.day:
             dt_obj = parse(field)
-            dt0 = parse_field(str(dt_obj - datetime.timedelta(1)))
-            dt2 = parse_field(str(dt_obj + datetime.timedelta(1)))
+            dt0 = parse_field(str(dt_obj - timedelta(1)))
+            dt2 = parse_field(str(dt_obj + timedelta(1)))
             preds = tuple(make_predicate([el.year, el.month, el.day])[0]
                           for el in (dt0, dt1, dt2))
             return preds

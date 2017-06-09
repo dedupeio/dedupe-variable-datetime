@@ -18,6 +18,7 @@ class DateTimeType(FieldType):
                             dtp.hourPredicate,
                             dtp.exclusiveMonthPredicate,
                             dtp.exclusiveDayPredicate,
+                            dtp.threeDayPredicate,
                             dtp.exclusiveHourPredicate]
 
     def __len__(self):
