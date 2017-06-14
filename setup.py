@@ -7,7 +7,7 @@ except ImportError:
 setup(
     name='dedupe-variable-datetime',
     url='https://github.com/datamade/dedupe-variable-datetime',
-    version='0.1.2',
+    version='0.1.3',
     description='DateTime variable type for dedupe',
     packages=['dedupe.variables'],
     install_requires=['dedupe',
