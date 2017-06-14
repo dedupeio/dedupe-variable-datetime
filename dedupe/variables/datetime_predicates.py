@@ -1,4 +1,7 @@
 from datetime_distance import DateTimeComparator
+from datetime import timedelta
+
+from dateutil.parser import parse
 
 
 def parse_field(field):
@@ -9,7 +12,6 @@ def parse_field(field):
     dt = comp.parse_resolution(field)[0]
     return dt
 
-
 def make_predicate(attrs):
     """
     Standardized helper function to handle missing resolutions and
@@ -18,6 +20,7 @@ def make_predicate(attrs):
     output = tuple(attrs)
     # Check that all resolutions are present in the string
     if all(output):
+        output = tuple(['-'.join(str(dt) for dt in output)])
         return output
     else:
         return ()
@@ -64,6 +67,25 @@ def dayPredicate(field):
     dt = parse_field(field)
     if dt:
         return make_predicate([dt.year, dt.month, dt.day])
+    else:
+        return ()
+
+
+def threeDayPredicate(field):
+    """
+    Hash a field based on a three-day range.
+    """
+    dt1 = parse_field(field)
+    if dt1:
+        if dt1.day:
+            dt_obj = parse(field)
+            dt0 = parse_field(str(dt_obj - timedelta(1)))
+            dt2 = parse_field(str(dt_obj + timedelta(1)))
+            preds = tuple(make_predicate([el.year, el.month, el.day])[0]
+                          for el in (dt0, dt1, dt2))
+            return preds
+        else:
+            return ()
     else:
         return ()
 

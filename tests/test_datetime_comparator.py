@@ -3,7 +3,7 @@ import math
 import numpy as np
 import datetime
 
-from dedupe.variables.datetime import DateTimeType
+from dedupe.variables.date_time import DateTimeType
 import dedupe.variables.datetime_predicates as dtp
 
 
@@ -100,7 +100,7 @@ def test_datetime_object():
 
 def test_year_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.yearPredicate(field) == (2013,)
+    assert dtp.yearPredicate(field) == ('2013',)
 
     missing_field = '11:45am May 6th'
     assert dtp.yearPredicate(missing_field) == ()
@@ -108,7 +108,7 @@ def test_year_predicate():
 
 def test_month_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.monthPredicate(field) == (2013, 5)
+    assert dtp.monthPredicate(field) == ('2013-5',)
 
     missing_field = '2013'
     assert dtp.monthPredicate(missing_field) == ()
@@ -116,7 +116,7 @@ def test_month_predicate():
 
 def test_exclusive_month_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.exclusiveMonthPredicate(field) == (5,)
+    assert dtp.exclusiveMonthPredicate(field) == ('5',)
 
     missing_field = '11:45am'
     assert dtp.exclusiveMonthPredicate(missing_field) == ()
@@ -124,7 +124,7 @@ def test_exclusive_month_predicate():
 
 def test_day_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.dayPredicate(field) == (2013, 5, 6)
+    assert dtp.dayPredicate(field) == ('2013-5-6',)
 
     missing_field = 'May 2013'
     assert dtp.dayPredicate(missing_field) == ()
@@ -132,15 +132,26 @@ def test_day_predicate():
 
 def test_exclusive_day_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.exclusiveDayPredicate(field) == (6,)
+    assert dtp.exclusiveDayPredicate(field) == ('6',)
 
     missing_field = '5/2013'
     assert dtp.exclusiveDayPredicate(missing_field) == ()
 
 
+def test_three_day_predicate():
+    field = 'May 6th, 2015'
+    assert dtp.threeDayPredicate(field) == ('2015-5-5', '2015-5-6', '2015-5-7')
+
+    field2 = 'May 8th, 2015'
+    assert '2015-5-7' in dtp.threeDayPredicate(field)
+    assert '2015-5-7' in dtp.threeDayPredicate(field2)
+
+    missing_field = 'May 2015'
+    assert dtp.threeDayPredicate(missing_field) == ()
+
 def test_hour_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.hourPredicate(field) == (2013, 5, 6, 11)
+    assert dtp.hourPredicate(field) == ('2013-5-6-11',)
 
     missing_field = 'May 6th, 2013'
     assert dtp.hourPredicate(missing_field) == ()
@@ -148,7 +159,7 @@ def test_hour_predicate():
 
 def test_exclusive_hour_predicate():
     field = '11:45am May 6th, 2013'
-    assert dtp.exclusiveHourPredicate(field) == (11,)
+    assert dtp.exclusiveHourPredicate(field) == ('11',)
 
     missing_field = 'May 6th, 2013'
     assert dtp.exclusiveHourPredicate(missing_field) == ()
