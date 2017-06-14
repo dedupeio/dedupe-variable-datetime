@@ -12,6 +12,7 @@ def parse_field(field):
     dt = comp.parse_resolution(field)[0]
     return dt
 
+
 def make_predicate(attrs):
     """
     Standardized helper function to handle missing resolutions and
@@ -20,7 +21,7 @@ def make_predicate(attrs):
     output = tuple(attrs)
     # Check that all resolutions are present in the string
     if all(output):
-        output = tuple(['-'.join(str(dt) for dt in output)])
+        output = ('-'.join(str(dt) for dt in output),)
         return output
     else:
         return ()
