@@ -149,6 +149,10 @@ def test_three_day_predicate():
     missing_field = 'May 2015'
     assert dtp.threeDayPredicate(missing_field) == ()
 
+    bad_parse_field = '2015-06-05 1899-12-30'
+    expected = ('2015-6-4', '2015-6-5', '2015-6-6')
+    assert dtp.threeDayPredicate(bad_parse_field) == expected
+
 def test_hour_predicate():
     field = '11:45am May 6th, 2013'
     assert dtp.hourPredicate(field) == ('2013-5-6-11',)
