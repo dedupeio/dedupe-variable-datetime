@@ -49,6 +49,12 @@ def test_days():
         np.array([1, 0, 1, 0, 0, 0, math.sqrt(35), 0, 0, 0]))
 
 
+def test_month_and_day():
+    dt = DateTimeType({'field': 'foo'})
+    np.testing.assert_almost_equal(dt.comparator('7/7',
+                                                 'July 9th'),
+        np.array([1, 0, 1, 0, 0, 0, math.sqrt(2), 0, 0, 0]))
+
 def test_alternate_formats():
     dt = DateTimeType({'field': 'foo'})
     comp = dt.comparator('May 5th, 2013','2013-06-09')
@@ -146,12 +152,14 @@ def test_three_day_predicate():
     assert '2015-5-7' in dtp.threeDayPredicate(field)
     assert '2015-5-7' in dtp.threeDayPredicate(field2)
 
-    missing_field = 'May 2015'
-    assert dtp.threeDayPredicate(missing_field) == ()
+    missing_fields = ['May 2015', '5/13']
+    for missing_field in missing_fields:
+        assert dtp.threeDayPredicate(missing_field) == ()
 
     bad_parse_field = '2015-06-05 1899-12-30'
     expected = ('2015-6-4', '2015-6-5', '2015-6-6')
     assert dtp.threeDayPredicate(bad_parse_field) == expected
+
 
 def test_hour_predicate():
     field = '11:45am May 6th, 2013'
