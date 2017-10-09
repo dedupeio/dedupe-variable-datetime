@@ -78,7 +78,7 @@ def threeDayPredicate(field):
     """
     dt1 = parse_field(field)
     if dt1:
-        if dt1.day:
+        if dt1.day and dt1.year:
             dt_obj = datetime(dt1.year, dt1.month, dt1.day)
             dt0 = parse_field(str(dt_obj - timedelta(1)))
             dt2 = parse_field(str(dt_obj + timedelta(1)))
