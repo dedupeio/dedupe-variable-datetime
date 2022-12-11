@@ -21,6 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
+        pip instal https://github.com/dedupeio/dedupe/archive/refs/heads/pluggy-variables.zip
         pip install -e .
     - name: Test with pytest
       run: |     
