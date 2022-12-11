@@ -1,6 +1,5 @@
 import numpy as np
 from datetime_distance import DateTimeComparator
-from dedupe.hookspecs import hookimpl
 from dedupe.variables.base import DerivedType, FieldType
 from dedupe.variables.string import affineGap
 
@@ -113,8 +112,3 @@ class DateTimeType(FieldType):
         distances[1 : len(comparisons) + 1] = comparisons
 
         return distances
-
-
-@hookimpl
-def register_variable():
-    return {DateTimeType.type: DateTimeType}

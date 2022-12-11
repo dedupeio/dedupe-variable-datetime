@@ -13,7 +13,7 @@ dependencies = ["dedupe>=3.0", "datetime-distance"]
 Homepage = "https://github.com/datamade/dedupe-variable-datetime"
 
 [project.entry-points]
-dedupe = {datetimetype = "datetimetype"}
+dedupevariables = {datetimetype = "datetimetype:DateTimeType"}
 
 [tool.setuptools]
 packages = ["datetimetype"]
