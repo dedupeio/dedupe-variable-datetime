@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dedupe-variable-datetime"
+version = "1.0.0"
+license = {text = "The MIT License: http://www.opensource.org/licenses/mit-license.php"}
+description = "DateTime variable type for dedupe"
+dependencies = ["dedupe>=3.0", "datetime-distance"]
+
+[project.urls]
+Homepage = "https://github.com/datamade/dedupe-variable-datetime"
+
+[project.entry-points]
+dedupe = {datetimetype = "datetimetype"}
+
+[tool.setuptools]
+packages = ["datetimetype"]
+include-package-data = false
