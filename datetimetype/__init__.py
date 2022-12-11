@@ -1,25 +1,27 @@
-from __future__ import print_function
-
-from dedupe.variables.string import affineGap
-from dedupe.variables.base import FieldType, DerivedType
-from dedupe import predicates
-from datetime_distance import DateTimeComparator
-import dedupe.variables.datetime_predicates as dtp
 import numpy as np
+from datetime_distance import DateTimeComparator
+from dedupe.hookspecs import hookimpl
+from dedupe.variables.base import DerivedType, FieldType
+from dedupe.variables.string import affineGap
+
+import datetimetype.datetime_predicates as dtp
+from dedupe import predicates
 
 
 class DateTimeType(FieldType):
 
     type = "DateTime"
-    _predicate_functions = [predicates.wholeFieldPredicate,
-                            dtp.yearPredicate,
-                            dtp.monthPredicate,
-                            dtp.dayPredicate,
-                            dtp.hourPredicate,
-                            dtp.exclusiveMonthPredicate,
-                            dtp.exclusiveDayPredicate,
-                            dtp.threeDayPredicate,
-                            dtp.exclusiveHourPredicate]
+    _predicate_functions = [
+        predicates.wholeFieldPredicate,
+        dtp.yearPredicate,
+        dtp.monthPredicate,
+        dtp.dayPredicate,
+        dtp.hourPredicate,
+        dtp.exclusiveMonthPredicate,
+        dtp.exclusiveDayPredicate,
+        dtp.threeDayPredicate,
+        dtp.exclusiveHourPredicate,
+    ]
 
     def __len__(self):
 
@@ -43,31 +45,31 @@ class DateTimeType(FieldType):
         super(DateTimeType, self).__init__(definition)
 
         # Parser settings
-        self.fuzzy = definition.get('fuzzy', True)
-        self.dayfirst = definition.get('dayfirst', False)
-        self.yearfirst = definition.get('yearfirst', False)
+        self.fuzzy = definition.get("fuzzy", True)
+        self.dayfirst = definition.get("dayfirst", False)
+        self.yearfirst = definition.get("yearfirst", False)
 
         # Define the expected fields in the output vector
-        self.variables = ('seconds', 'days', 'months', 'years', 'full string')
-        fields = self._get_fields(definition['field'])
+        self.variables = ("seconds", "days", "months", "years", "full string")
+        fields = self._get_fields(definition["field"])
 
         # Format for output vector: Not Missing + Dummies + Fields
-        self.expanded_size = (1 + (len(self.variables) - 1) +
-                              len(self.variables))
+        self.expanded_size = 1 + (len(self.variables) - 1) + len(self.variables)
 
-        self.higher_vars = [DerivedType({'name': variable,
-                                         'type': field_type})
-                            for variable, field_type in fields]
+        self.higher_vars = [
+            DerivedType({"name": variable, "type": field_type})
+            for variable, field_type in fields
+        ]
 
     def _get_fields(self, field):
         """
         Returns the format for the output vector.
         """
-        fields = [('{}: Not Missing'.format(field), 'Dummy')]
+        fields = [("{}: Not Missing".format(field), "Dummy")]
 
-        fields += [(var, 'Dummy') for var in self.variables[:-1]]
+        fields += [(var, "Dummy") for var in self.variables[:-1]]
 
-        fields += [(var, 'Derived') for var in self.variables]
+        fields += [(var, "Derived") for var in self.variables]
 
         return fields
 
@@ -83,9 +85,9 @@ class DateTimeType(FieldType):
 
         Compares two strings and returns a distance vector.
         """
-        c = DateTimeComparator(fuzzy=self.fuzzy,
-                               dayfirst=self.dayfirst,
-                               yearfirst=self.yearfirst)
+        c = DateTimeComparator(
+            fuzzy=self.fuzzy, dayfirst=self.dayfirst, yearfirst=self.yearfirst
+        )
 
         # Initialize the output vector with zeros
         distances = np.zeros(self.expanded_size)
@@ -108,6 +110,11 @@ class DateTimeType(FieldType):
             return distances
 
         # Copy over all comparisons, skipping the last index (string var)
-        distances[1:len(comparisons)+1] = comparisons
+        distances[1 : len(comparisons) + 1] = comparisons
 
         return distances
+
+
+@hookimpl
+def register_variable():
+    return {DateTimeType.type: DateTimeType}
