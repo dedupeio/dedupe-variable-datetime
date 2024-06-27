@@ -1,13 +1,13 @@
 import numpy as np
 from datetime_distance import DateTimeComparator
+from dedupe import predicates
 from dedupe.variables.base import DerivedType, FieldType
 from dedupe.variables.string import affineGap
 
 import datetimetype.datetime_predicates as dtp
-from dedupe import predicates
 
 
-class DateTimeType(FieldType):
+class DateTime(FieldType):
 
     type = "DateTime"
     _predicate_functions = [
@@ -26,7 +26,7 @@ class DateTimeType(FieldType):
 
         return self.expanded_size
 
-    def __init__(self, definition):
+    def __init__(self, field, fuzzy=True, dayfirst=False, yearfirst=False, **kwargs):
         """
         Initialize a field for comparing datetime types, including timestamps,
         dates, months, and years.
@@ -41,30 +41,29 @@ class DateTimeType(FieldType):
         for more information about python-dateutil's parser settings.
         """
 
-        super(DateTimeType, self).__init__(definition)
+        super().__init__(field, **kwargs)
 
         # Parser settings
-        self.fuzzy = definition.get("fuzzy", True)
-        self.dayfirst = definition.get("dayfirst", False)
-        self.yearfirst = definition.get("yearfirst", False)
+        self.fuzzy = fuzzy
+        self.dayfirst = dayfirst
+        self.yearfirst = yearfirst
 
         # Define the expected fields in the output vector
         self.variables = ("seconds", "days", "months", "years", "full string")
-        fields = self._get_fields(definition["field"])
+        fields = self._get_fields(field)
 
         # Format for output vector: Not Missing + Dummies + Fields
         self.expanded_size = 1 + (len(self.variables) - 1) + len(self.variables)
 
         self.higher_vars = [
-            DerivedType({"name": variable, "type": field_type})
-            for variable, field_type in fields
+            DerivedType(variable, field_type) for variable, field_type in fields
         ]
 
     def _get_fields(self, field):
         """
         Returns the format for the output vector.
         """
-        fields = [("{}: Not Missing".format(field), "Dummy")]
+        fields = [(f"{field}: Not Missing", "Dummy")]
 
         fields += [(var, "Dummy") for var in self.variables[:-1]]
 
