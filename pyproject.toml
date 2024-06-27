@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dedupe-variable-datetime"
-version = "1.0.0"
+version = "2.0.0"
 license = {text = "The MIT License: http://www.opensource.org/licenses/mit-license.php"}
 description = "DateTime variable type for dedupe"
 dependencies = ["dedupe>=3.0", "datetime-distance"]

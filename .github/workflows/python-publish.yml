@@ -26,6 +26,7 @@ jobs:
         pip install pytest
         pytest
   wheels:
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     needs: test
     name: Build wheels
     runs-on: ubuntu-latest
